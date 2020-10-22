@@ -5,6 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByName(String name);
+
+    User findById(long id);
+
     User findByLogin(String login);
+
     void deleteByLogin(String login);
 }

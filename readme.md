@@ -215,3 +215,68 @@ Response example:
     "errors": []
 }
 ```
+
+You can get particular user with id or login
+
+### Get USER by id
+
+URL: userapi/id/{id}
+Method: GET
+
+
+Response example:
+
+```json
+{
+    "success": true,
+    "object": {
+        "id": 53,
+        "created": "2020-10-22T10:55:08.633+00:00",
+        "updated": "2020-10-22T10:55:08.655+00:00",
+        "login": "John",
+        "name": "John Smith",
+        "password": "aZdfskj2323",
+        "roles": [
+            {
+                "id": 15,
+                "created": "2020-10-20T18:14:32.039+00:00",
+                "updated": "2020-10-20T18:14:32.039+00:00",
+                "name": "USER"
+            }
+        ]
+    },
+    "errors": []
+}
+```
+
+### Get USER by login
+
+URL: userapi/login/{login}
+Method: GET
+
+
+Response example:
+
+```json
+{
+    "success": true,
+    "object": {
+        "id": 53,
+        "created": "2020-10-22T10:55:08.633+00:00",
+        "updated": "2020-10-22T10:55:08.655+00:00",
+        "login": "John",
+        "name": "John Smith",
+        "password": "aZdfskj2323",
+        "roles": [
+            {
+                "id": 15,
+                "created": "2020-10-20T18:14:32.039+00:00",
+                "updated": "2020-10-20T18:14:32.039+00:00",
+                "name": "USER"
+            }
+        ]
+    },
+    "errors": []
+}
+```
+

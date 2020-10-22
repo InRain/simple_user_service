@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/userapi/")
@@ -25,9 +25,56 @@ public class UserRestController {
         this.userService = userService;
     }
 
+    @RequestMapping(value = "/getall", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseMessage<List<User>>> getAllUsers() {
+        ResponseMessage<List<User>> responseMessage = new ResponseMessage<>();
+        responseMessage.setSuccess(true);
+        List<User> users = userService.getAll();
+        if (users.size() > 0) {
+            users.forEach((u) -> u.setRoles(null));
+            responseMessage.setObject(users);
+        }
+        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/id/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void getUser(@PathVariable("id") int id) {
-        System.out.println(id);
+    public ResponseEntity<ResponseMessage<User>> getUser(@PathVariable("id") long id) {
+        try {
+            ResponseMessage<User> responseMessage = new ResponseMessage<>();
+            User u = userService.findById(id);
+            if (u != null) {
+                responseMessage.setSuccess(true);
+                responseMessage.setObject(u);
+                return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+            }
+            responseMessage.setSuccess(false);
+            responseMessage.putError("No user", "No user with id= " + id + " not found");
+            return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            ResponseMessage<User> responseMessage = new ResponseMessage<>();
+            responseMessage.setSuccess(false);
+            return new ResponseEntity<>(responseMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/login/{login}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseMessage<User>> getUser(@PathVariable String login) {
+        try {
+            ResponseMessage<User> responseMessage = new ResponseMessage<>();
+            User u = userService.findByLogin(login);
+            if (u != null) {
+                responseMessage.setSuccess(true);
+                responseMessage.setObject(u);
+                return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+            }
+            responseMessage.setSuccess(false);
+            responseMessage.putError("No user", "No user with login = " + login + " not found");
+            return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            ResponseMessage<User> responseMessage = new ResponseMessage<>();
+            responseMessage.setSuccess(false);
+            return new ResponseEntity<>(responseMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -98,24 +145,24 @@ public class UserRestController {
         ResponseMessage<User> responseMessage = new ResponseMessage<>();
         responseMessage.setSuccess(true);
         try {
-            if(!user.isPasswordValid()){
+            if (!user.isPasswordValid()) {
                 responseMessage.setSuccess(false);
                 responseMessage.putError("Bad password", "Please provide password contains one uppercase letter, one lowercase letter and one number");
             }
-            if(!user.isLoginValid()){
+            if (!user.isLoginValid()) {
                 responseMessage.setSuccess(false);
-                responseMessage.putError("Bad login","Login was not provided");
+                responseMessage.putError("Bad login", "Login was not provided");
             }
-            if(!user.isNameValid()){
+            if (!user.isNameValid()) {
                 responseMessage.setSuccess(false);
-                responseMessage.putError("Bad name","Name was not provided");
+                responseMessage.putError("Bad name", "Name was not provided");
             }
-            if(!user.isRolesValid()){
+            if (!user.isRolesValid()) {
                 responseMessage.setSuccess(false);
-                responseMessage.putError("No roles","Roles was not provided");
+                responseMessage.putError("No roles", "Roles was not provided");
             }
 
-            if(responseMessage.isSuccess()){
+            if (responseMessage.isSuccess()) {
                 userService.save(user);
                 responseMessage.setSuccess(true);
                 responseMessage.setObject(user);
@@ -128,7 +175,7 @@ public class UserRestController {
             responseMessage.setSuccess(false);
             responseMessage.putError("Invalid data", "Invalid data was provided");
             return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
-        } catch (JpaObjectRetrievalFailureException jpaException){
+        } catch (JpaObjectRetrievalFailureException jpaException) {
             responseMessage.setSuccess(false);
             responseMessage.putError("Entity not found", jpaException.getMessage());
             return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);

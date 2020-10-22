@@ -158,4 +158,66 @@ public class UserRestControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody().getErrors().size()).isEqualTo(1);
     }
+
+    @Test
+    public void getExistingUserByIdTest() {
+        UserService mockService = mock(UserService.class);
+
+        when(mockService.findById(validUser.getId())).thenReturn(validUser);
+
+        UserRestController controller = new UserRestController(mockService);
+        ResponseEntity<ResponseMessage<User>> response = controller.getUser(validUser.getId());
+
+        assertThat(response).isNotNull();
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().isSuccess()).isTrue();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void getExistingUserByLoginTest() {
+        UserService mockService = mock(UserService.class);
+
+        when(mockService.findByLogin(validUser.getLogin())).thenReturn(validUser);
+
+        UserRestController controller = new UserRestController(mockService);
+        ResponseEntity<ResponseMessage<User>> response = controller.getUser(validUser.getLogin());
+
+        assertThat(response).isNotNull();
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().isSuccess()).isTrue();
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void getUnexistingUserByIdTest() {
+        UserService mockService = mock(UserService.class);
+
+        when(mockService.findById(validUser.getId())).thenReturn(null);
+
+        UserRestController controller = new UserRestController(mockService);
+        ResponseEntity<ResponseMessage<User>> response = controller.getUser(validUser.getId());
+
+        assertThat(response).isNotNull();
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().isSuccess()).isFalse();
+        assertThat(response.getBody().getErrors().size()).isEqualTo(1);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void getUnexistingUserByLoginTest() {
+        UserService mockService = mock(UserService.class);
+
+        when(mockService.findByLogin(validUser.getLogin())).thenReturn(null);
+
+        UserRestController controller = new UserRestController(mockService);
+        ResponseEntity<ResponseMessage<User>> response = controller.getUser(validUser.getLogin());
+
+        assertThat(response).isNotNull();
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().isSuccess()).isFalse();
+        assertThat(response.getBody().getErrors().size()).isEqualTo(1);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
 }

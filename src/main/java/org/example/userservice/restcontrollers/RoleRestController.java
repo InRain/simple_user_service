@@ -33,7 +33,7 @@ public class RoleRestController {
         ResponseMessage<Role> responseMessage = new ResponseMessage<>();
         if (role == null) {
             responseMessage.setSuccess(false);
-            responseMessage.putError("Empty body","Empty body");
+            responseMessage.putError("Empty body", "Empty body");
             return new ResponseEntity<>(responseMessage, HttpStatus.BAD_REQUEST);
         }
         try {
@@ -44,7 +44,7 @@ public class RoleRestController {
         } catch (DataIntegrityViolationException integrityViolationException) {
             if (integrityViolationException.getCause() instanceof ConstraintViolationException) {
                 responseMessage.setSuccess(false);
-                responseMessage.putError("Record Exists","Role already exists");
+                responseMessage.putError("Record Exists", "Role already exists");
             }
             if (integrityViolationException.getCause() instanceof DataException) {
                 responseMessage.setSuccess(false);
@@ -60,7 +60,7 @@ public class RoleRestController {
         responseMessage.setSuccess(true);
         List<Role> roles = roleService.getAll();
         if (roles.size() == 0) {
-            return new ResponseEntity<>(responseMessage,HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(responseMessage, HttpStatus.NO_CONTENT);
         }
         responseMessage.setObject(roles);
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);

@@ -13,7 +13,7 @@ public class ResponseMessage<T> {
     private T object;
     private List<ResponseError> errors = new ArrayList<>();
 
-    public void putError(String message, String description){
-        errors.add(new ResponseError(message,description));
+    public void putError(String message, String description) {
+        errors.add(new ResponseError(message, description));
     }
 }
