@@ -55,11 +55,14 @@ public class RoleRestController {
     }
 
     @RequestMapping(value = "/getall", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Role>> getAllRoles() {
+    public ResponseEntity<ResponseMessage<List<Role>>> getAllRoles() {
+        ResponseMessage<List<Role>> responseMessage = new ResponseMessage<>();
+        responseMessage.setSuccess(true);
         List<Role> roles = roleService.getAll();
         if (roles.size() == 0) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>(responseMessage,HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(roles, HttpStatus.OK);
+        responseMessage.setObject(roles);
+        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 }

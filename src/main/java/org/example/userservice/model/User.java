@@ -1,5 +1,6 @@
 package org.example.userservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -26,24 +27,31 @@ public class User extends BaseEntity {
             inverseJoinColumns = {@JoinColumn(name = "roleid", referencedColumnName = "id")})
     private List<Role> roles;
 
+    @JsonIgnore
     public boolean isNameValid() {
         if (name != null) {
             return !name.isEmpty();
         } else return false;
     }
+
+    @JsonIgnore
     public boolean isPasswordValid() {
         if (password != null) {
             return !password.isEmpty() && password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{3,}$");
         } else return false;
     }
+
+    @JsonIgnore
     public boolean isLoginValid() {
         if (login != null) {
             return !login.isEmpty();
         } else return false;
     }
+
+    @JsonIgnore
     public boolean isRolesValid() {
         if (roles != null) {
-            return roles.size()>0;
+            return roles.size() > 0;
         } else return false;
     }
 }
